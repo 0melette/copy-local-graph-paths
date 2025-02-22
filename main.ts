@@ -34,11 +34,8 @@ export default class CopyLocalGraphPathsPlugin extends Plugin {
 		const activeFile = this.app.workspace.getActiveFile();
 		if (!activeFile) {
 			new Notice("No active file.");
-			console.log("No active file detected.");
 			return;
 		}
-
-		console.log(`Active file: ${activeFile.path}`);
 
 		if (!this.settings.basePath) {
 			new Notice(
@@ -51,8 +48,6 @@ export default class CopyLocalGraphPathsPlugin extends Plugin {
 		const metadataCache = this.app.metadataCache;
 		const fileCache = metadataCache.getCache(activeFile.path);
 
-		console.log("File cache:", fileCache);
-
 		const excludedFolders = this.settings.excludedFolders
 			? this.settings.excludedFolders
 					.split(",")
@@ -61,16 +56,10 @@ export default class CopyLocalGraphPathsPlugin extends Plugin {
 			: [];
 
 		if (fileCache?.links) {
-			console.log("Links found:", fileCache.links);
 			for (const link of fileCache.links) {
 				const resolvedPath = metadataCache.getFirstLinkpathDest(
 					link.link,
 					activeFile.path
-				);
-				console.log(
-					`Processing link: ${link.link} -> ${
-						resolvedPath?.path ?? "null"
-					}`
 				);
 
 				if (resolvedPath) {
@@ -82,15 +71,12 @@ export default class CopyLocalGraphPathsPlugin extends Plugin {
 							fullPath.includes(folder)
 						)
 					) {
-						console.log(`Skipping excluded file: ${fullPath}`);
 						continue;
 					}
 
 					linkedFiles.add(fullPath);
 				}
 			}
-		} else {
-			console.log("No links found in metadata cache.");
 		}
 
 		if (linkedFiles.size === 0) {
@@ -106,12 +92,14 @@ export default class CopyLocalGraphPathsPlugin extends Plugin {
 		new Notice("Copied local graph file paths to clipboard!");
 	}
 
-	onunload() {
-
-	}
+	onunload() {}
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		this.settings = Object.assign(
+			{},
+			DEFAULT_SETTINGS,
+			await this.loadData()
+		);
 	}
 
 	async saveSettings() {
@@ -128,7 +116,7 @@ class CopyLocalGraphPathsSettingTab extends PluginSettingTab {
 	}
 
 	display(): void {
-		const {containerEl} = this;
+		const { containerEl } = this;
 
 		containerEl.empty();
 
