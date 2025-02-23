@@ -3,8 +3,9 @@
 	"name": "Copy Local Graph Paths",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Copies file paths of local graph links to clipboard (CTRL + SHIFT  + K)",
-	"author": "0melette",
+	"description": "Copies file paths of local graph links to clipboard.",
+	"author": "Amy Z",
 	"authorUrl": "https://0melette.github.io/",
+	"fundingUrl": "https://github.com/sponsors/0melette",
 	"isDesktopOnly": false
 }

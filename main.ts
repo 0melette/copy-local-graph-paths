@@ -1,4 +1,4 @@
-import { Plugin, Notice, PluginSettingTab, App, Setting } from "obsidian";
+import { Plugin, Notice, PluginSettingTab, App, Setting, normalizePath } from "obsidian";
 
 interface CopyLocalGraphPathsSettings {
 	basePath: string;
@@ -21,7 +21,6 @@ export default class CopyLocalGraphPathsPlugin extends Plugin {
 		this.addCommand({
 			id: "copy-local-graph-paths",
 			name: "Copy local graph file paths",
-			hotkeys: [{ modifiers: ["Mod", "Shift"], key: "K" }],
 			callback: async () => {
 				await this.copyLocalGraphPaths();
 			},
@@ -63,7 +62,8 @@ export default class CopyLocalGraphPathsPlugin extends Plugin {
 				);
 
 				if (resolvedPath) {
-					const fullPath = `${this.settings.basePath}/${resolvedPath.path}`;
+					const parts = [this.settings.basePath, resolvedPath.path].filter(p => p);
+					const fullPath = normalizePath(parts.join("/"));
 
 					if (
 						excludedFolders.length > 0 &&
@@ -87,9 +87,12 @@ export default class CopyLocalGraphPathsPlugin extends Plugin {
 		const pathsString = Array.from(linkedFiles).join(
 			this.settings.outputFormat === "semicolon" ? ";" : "\n"
 		);
-
-		await navigator.clipboard.writeText(pathsString);
-		new Notice("Copied local graph file paths to clipboard!");
+		try {
+			await navigator.clipboard.writeText(pathsString);
+			new Notice("Copied local graph file paths to clipboard!");
+		} catch (e) {
+			new Notice("Failed to copy paths. Please check permissions.");
+		}
 	}
 
 	onunload() {}
@@ -121,7 +124,7 @@ class CopyLocalGraphPathsSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName("Base Path")
+			.setName("Base path")
 			.setDesc("The base path that will be prepended to all file paths.")
 			.addText((text) =>
 				text
@@ -133,7 +136,7 @@ class CopyLocalGraphPathsSettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Output Format")
+			.setName("Output format")
 			.setDesc(
 				"Choose how the file paths should be separated when copied."
 			)
