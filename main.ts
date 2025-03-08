@@ -154,7 +154,7 @@ class CopyLocalGraphPathsSettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Excluded Folders")
+			.setName("Excluded folders")
 			.setDesc("Comma-separated list of folders to ignore.")
 			.addText((text) =>
 				text
